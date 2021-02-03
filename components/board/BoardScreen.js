@@ -8,7 +8,7 @@ class BoardScreen extends Component {
   render() {
     return (
       <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-        <Text>It is Board List</Text>
+        <Text>It is updated Board List 1</Text>
         <Button
           title="Go to Details"
           onPress={() => this.props.navigation.navigate('BoardDetails')}

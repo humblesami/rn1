@@ -1,11 +1,14 @@
 import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
-import BoardScreen from './components/BoardScreen';
-import BoardDetailScreen from './components/BoardDetailScreen';
-import AddBoardScreen from './components/AddBoardScreen';
-import EditBoardScreen from './components/EditBoardScreen';
+import { Text, View,  } from 'react-native';
 import { createSwitchNavigator, createAppContainer } from "react-navigation";
 import { createStackNavigator } from 'react-navigation-stack';
+
+
+import student from './components/student';
+import BoardScreen from './components/board/BoardScreen';
+// import BoardDetailScreen from './components/board/BoardDetailScreen';
+// import AddBoardScreen from './components/board/AddBoardScreen';
+// import EditBoardScreen from './components/board/EditBoardScreen';
 
 
 class HomeScreen extends React.Component {
@@ -19,10 +22,17 @@ class HomeScreen extends React.Component {
 }
 
 const BoardNavigator = createStackNavigator({
-    Board: BoardScreen,
-    BoardDetails: BoardDetailScreen,
-    AddBoard: AddBoardScreen,
-    EditBoard: EditBoardScreen,
+    MainActivity: student.MainActivity,
+    // BoardDetails: BoardDetailScreen,
+    // AddBoard: AddBoardScreen,
+    // EditBoard: EditBoardScreen,
+    // MainActivity: MainActivity,
+    // ShowStudentListActivity: ShowStudentListActivity,
+    // EditStudentRecordActivity: EditStudentRecordActivity
+    // First: MainActivity,
+    // Second: ShowStudentListActivity,
+    // Third: EditStudentRecordActivity
+
 });
 
 const AppNavigator = createSwitchNavigator({
@@ -37,11 +47,4 @@ export default class App extends React.Component {
     }
 }
 
-const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        backgroundColor: '#fff',
-        alignItems: 'center',
-        justifyContent: 'center',
-    },
-});
+
