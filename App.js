@@ -22,16 +22,16 @@ class HomeScreen extends React.Component {
 }
 
 const BoardNavigator = createStackNavigator({
-    MainActivity: student.MainActivity,
+    // MainActivity: student.MainActivity,
     // BoardDetails: BoardDetailScreen,
     // AddBoard: AddBoardScreen,
     // EditBoard: EditBoardScreen,
     // MainActivity: MainActivity,
     // ShowStudentListActivity: ShowStudentListActivity,
     // EditStudentRecordActivity: EditStudentRecordActivity
-    // First: MainActivity,
-    // Second: ShowStudentListActivity,
-    // Third: EditStudentRecordActivity
+    First: student.MainActivity,
+    Second: student.ShowStudentListActivity,
+    Third: student.EditStudentRecordActivity
 
 });
 
