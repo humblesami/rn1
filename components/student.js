@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { SafeAreaView, FlatList, StyleSheet, Platform, Text, View, Alert, TextInput, TouchableOpacity, ActivityIndicator } from 'react-native';
+import { SafeAreaView, SectionList, FlatList, StyleSheet, Platform, Text, View, Alert, TextInput, TouchableOpacity, ActivityIndicator } from 'react-native';
 
 const styles = StyleSheet.create({
     container: {
@@ -8,6 +8,11 @@ const styles = StyleSheet.create({
         backgroundColor: '#fff',
         alignItems: 'center',
         justifyContent: 'center',
+    },
+    list_item:{
+        padding: '5px',        
+        margin: '5px',        
+        boder: '1px solid #ccc'
     },
     MainContainer: {
         alignItems: 'center',
@@ -68,23 +73,31 @@ class MainActivity extends React.Component {
     }
 
     InsertStudentRecordsToServer = () => {
-        fetch('http://localhost:8000/student/new/', {
+        let form_data = {};
+        form_data.student_name = this.state.TextInput_Student_Name;
+        form_data.student_phone_number = this.state.TextInput_Student_PhoneNumber;
+        form_data.student_email = this.state.TextInput_Student_Email;
+
+        
+        const upload_data = new FormData();
+        upload_data.append('student_name', form_data.student_name);
+        upload_data.append('student_phone_number', form_data.student_phone_number);
+        upload_data.append('student_email', form_data.student_email);
+        let url = 'http://localhost:8000/student/new/';
+        // headers: {
+        //     'Content-Type': 'multipart/form-data;',
+        // },
+        fetch(url, {
             method: 'POST',
-            headers: {
-                'Accept': 'application/json',
-            },
-            body: JSON.stringify({
-                student_name: this.state.TextInput_Student_Name,
-                student_phone_number: this.state.TextInput_Student_PhoneNumber,
-                student_email: this.state.TextInput_Student_Email
-            })
-        }).then((response) => response.json())
-            .then((responseJson) => {
-                // Showing response message coming from server after inserting records.
-                console.log(responseJson);
-            }).catch((error) => {
-                console.error(error);
+            body: upload_data
+        }).then(function(res){
+            res.json().then(function(responseJson){
+                if (responseJson.status == 'success') {
+                    console.log('Uploaded');
+                    alert('Upload Successful');
+                }
             });
+        });
     }
 
     GoTo_Show_StudentListActivity_Function = () => {
@@ -125,13 +138,15 @@ class MainActivity extends React.Component {
 }
 
 var student_list = [];
-const Item = ({ title }) => (
-    <View style={styles.item}>
-      <Text style={styles.title}>{title}</Text>
+const Item = ({ title, phone, email }) => (
+    <View style={styles.list_item}>
+      <Text>{title}</Text>
+      <Text>{phone}</Text>
+      <Text>{email}</Text>
     </View>
   );
   const renderItem = ({ item }) => (
-    <Item title={item.title} />
+    <Item title={item.student_name} phone={item.student_phone_number} email={item.student_email} />
   );
 class ShowStudentListActivity extends React.Component {
     constructor(props) {
@@ -197,13 +212,13 @@ class ShowStudentListActivity extends React.Component {
         }
 
         return (
-            <SafeAreaView style={styles.container}>
+            <View style={styles.container}>
                 <FlatList
                     data={student_list}
                     renderItem={renderItem}
                     keyExtractor={item => item.id}
                 />
-            </SafeAreaView>
+            </View>
         );
     }
 }
