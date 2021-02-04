@@ -1,5 +1,5 @@
 import React from 'react';
-
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { FlatList, StyleSheet, Platform, Text, View, TextInput, TouchableOpacity, ActivityIndicator } from 'react-native';
 
 const styles = StyleSheet.create({
@@ -12,7 +12,6 @@ const styles = StyleSheet.create({
     list_item: {
         padding: '5px',
         margin: '5px',
-        boder: '1px solid #ccc'
     },
     MainContainer: {
         alignItems: 'center',
@@ -91,6 +90,12 @@ class MainActivity extends React.Component {
         form_data.student_phone_number = this.state.TextInput_Student_PhoneNumber;
         form_data.student_email = this.state.TextInput_Student_Email;
 
+        let student_id = 1;
+        if(student_list.length)
+        {
+            student_id = student_list[student_list.length - 1].id + 1;
+        }
+        form_data.id = "" + student_id;
         const upload_data = new FormData();
         upload_data.append('student_name', form_data.student_name);
         upload_data.append('student_phone_number', form_data.student_phone_number);
@@ -106,21 +111,38 @@ class MainActivity extends React.Component {
             alert(errors);
             return;
         }
-        let url = 'http://localhost:8000/student/new/';
+        
+        student_list.push(form_data);
+        
+        (async () => {
+            await AsyncStorage.setItem(
+                'students/list',
+                JSON.stringify(student_list)
+            );
+            obj.GoTo_Show_StudentListActivity_Function();
+        })().catch(function(er){
+            
+        })
+        
+        // let url = 'http://localhost:8000/student/new/';
         // headers: {
         //     'Content-Type': 'multipart/form-data;',
         // },
-        fetch(url, {
-            method: 'POST',
-            body: upload_data
-        }).then(function (res) {
-            res.json().then(function (responseJson) {
-                if (responseJson.status == 'success') {
-                    console.log('Uploaded');
-                    obj.GoTo_Show_StudentListActivity_Function();
-                }
-            });
-        });
+        // fetch(url, {
+        //     method: 'POST',
+        //     body: upload_data
+        // }).then(function (res) {
+        //     res.json().then(function (responseJson) {
+        //         if (responseJson.status == 'success') {
+        //             console.log('Uploaded');
+        //             obj.GoTo_Show_StudentListActivity_Function();
+        //         }
+        //     }).catch((er)=>{
+        //         console.log(er);
+        //     });
+        // }).catch((er)=>{
+        //     console.log(er);
+        // });
     }
 
     GoTo_Show_StudentListActivity_Function = () => {
@@ -174,25 +196,43 @@ class ShowStudentListActivity extends React.Component {
         };
 
     componentDidMount() {
-        return fetch('http://localhost:8000/students/list/')
-            .then((response) => {
-                response.json().then((responseJson) => {
-                    if (responseJson && responseJson.data) {
-                        responseJson = responseJson.data;
-                    }
-                    student_list = responseJson;
-                    console.log(student_list, 888);
-                    this.setState({
-                        isLoading: false,
-                        dataSource: student_list,
-                    }, function () {
-                        // In this block you can do something with new state.
-                    });
-                })
-                    .catch((error) => {
-                        console.error(error);
-                    });
+        let obj = this;
+        (async () => {
+            //await AsyncStorage.removeItem('students/list');
+            let item_list = await AsyncStorage.getItem('students/list');
+            if(!item_list){
+                item_list = '[]';
+            }
+            student_list = JSON.parse(item_list);
+            obj.setState({
+                isLoading: false,
+                dataSource: student_list,
+            }, function () {
+                // In this block you can do something with new state.
             });
+        })().catch(err => {
+            console.error(err);
+        });
+        // return fetch('http://localhost:8000/students/list/')
+        //     .then((response) => {
+        //         response.json().then((responseJson) => {
+        //             if (responseJson && responseJson.data) {
+        //                 responseJson = responseJson.data;
+        //             }
+        //             student_list = responseJson;
+        //             console.log(student_list, 888);
+        //             this.setState({
+        //                 isLoading: false,
+        //                 dataSource: student_list,
+        //             }, function () {
+        //                 // In this block you can do something with new state.
+        //             });
+        //         }).catch((error) => {
+        //             console.error(error);
+        //         });
+        //     }).catch((error) => {
+        //         console.error(error);
+        //     });
     }
     GetStudentIDFunction = (id, student_name, student_phone_number, student_email) => {
         this.props.navigation.navigate('Third', {
