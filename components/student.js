@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { StyleSheet, Platform, Text, View, Alert, TextInput, TouchableOpacity, ActivityIndicator } from 'react-native';
+import { SafeAreaView, FlatList, StyleSheet, Platform, Text, View, Alert, TextInput, TouchableOpacity, ActivityIndicator } from 'react-native';
 
 const styles = StyleSheet.create({
     container: {
@@ -62,28 +62,26 @@ class MainActivity extends React.Component {
 
         this.state = {
             TextInput_Student_Name: '',
-            TextInput_Student_Class: '',
             TextInput_Student_PhoneNumber: '',
             TextInput_Student_Email: '',
         }
     }
 
     InsertStudentRecordsToServer = () => {
-        fetch('https://bizlogic.byethost8.com/Student/InsertStudentData.php', {
+        fetch('http://localhost:8000/student/new/', {
             method: 'POST',
             headers: {
                 'Accept': 'application/json',
             },
             body: JSON.stringify({
                 student_name: this.state.TextInput_Student_Name,
-                student_class: this.state.TextInput_Student_Class,
                 student_phone_number: this.state.TextInput_Student_PhoneNumber,
                 student_email: this.state.TextInput_Student_Email
             })
         }).then((response) => response.json())
             .then((responseJson) => {
                 // Showing response message coming from server after inserting records.
-                Alert.alert(responseJson);
+                console.log(responseJson);
             }).catch((error) => {
                 console.error(error);
             });
@@ -100,12 +98,6 @@ class MainActivity extends React.Component {
                 <TextInput
                     placeholder="Enter Student Name"
                     onChangeText={TextInputValue => this.setState({ TextInput_Student_Name: TextInputValue })}
-                    underlineColorAndroid='transparent'
-                    style={styles.TextInputStyleClass}
-                />
-                <TextInput
-                    placeholder="Enter Student Class"
-                    onChangeText={TextInputValue => this.setState({ TextInput_Student_Class: TextInputValue })}
                     underlineColorAndroid='transparent'
                     style={styles.TextInputStyleClass}
                 />
@@ -132,6 +124,15 @@ class MainActivity extends React.Component {
     }
 }
 
+var student_list = [];
+const Item = ({ title }) => (
+    <View style={styles.item}>
+      <Text style={styles.title}>{title}</Text>
+    </View>
+  );
+  const renderItem = ({ item }) => (
+    <Item title={item.title} />
+  );
 class ShowStudentListActivity extends React.Component {
     constructor(props) {
         super(props);
@@ -145,26 +146,32 @@ class ShowStudentListActivity extends React.Component {
             title: 'ShowStudentListActivity',
         };
 
-    componentDidMount() {
-        return fetch('https//bizlogic.byethost8.com/Student/ShowAllStudentList.php')
-            .then((response) => response.json())
-            .then((responseJson) => {                
-                this.setState({
-                    isLoading: false,
-                    dataSource: [],
-                }, function () {
-                    // In this block you can do something with new state.
-                });
+    componentDidMount() {        
+        return fetch('http://localhost:8000/students/list/')
+            .then((response) => {
+                response.json().then((responseJson) => {                                    
+                    if(responseJson && responseJson.data)
+                    {
+                        responseJson = responseJson.data;
+                    }
+                    student_list = responseJson;
+                    console.log(student_list, 888);
+                    this.setState({
+                        isLoading: false,
+                        dataSource: student_list,
+                    }, function () {
+                        // In this block you can do something with new state.
+                    });
             })
             .catch((error) => {
                 console.error(error);
             });
+        });
     }
-    GetStudentIDFunction = (student_id, student_name, student_class, student_phone_number, student_email) => {
+    GetStudentIDFunction = (id, student_name, student_phone_number, student_email) => {
         this.props.navigation.navigate('Third', {
-            ID: student_id,
+            ID: id,
             NAME: student_name,
-            CLASS: student_class,
             PHONE_NUMBER: student_phone_number,
             EMAIL: student_email
         });
@@ -190,17 +197,13 @@ class ShowStudentListActivity extends React.Component {
         }
 
         return (
-            <View style={styles.MainContainer_For_Show_StudentList_Activity}>
-                <SectionList
-                sections={[
-                    {title: 'D', data: ['Devin', 'Dan', 'Dominic']},
-                    {title: 'J', data: ['Jackson', 'James', 'Jillian', 'Jimmy', 'Joel', 'John', 'Julie']},
-                ]}
-                renderItem={({item}) => <Text style={styles.item}>{item}</Text>}
-                renderSectionHeader={({section}) => <Text>{section.title}</Text>}
-                keyExtractor={(item, index) => index}
+            <SafeAreaView style={styles.container}>
+                <FlatList
+                    data={student_list}
+                    renderItem={renderItem}
+                    keyExtractor={item => item.id}
                 />
-            </View>
+            </SafeAreaView>
         );
     }
 }
@@ -212,7 +215,6 @@ class EditStudentRecordActivity extends React.Component {
         this.state = {
             TextInput_Student_ID: '',
             TextInput_Student_Name: '',
-            TextInput_Student_Class: '',
             TextInput_Student_PhoneNumber: '',
             TextInput_Student_Email: '',
         }
@@ -224,7 +226,6 @@ class EditStudentRecordActivity extends React.Component {
         this.setState({
             TextInput_Student_ID: this.props.navigation.state.params.ID,
             TextInput_Student_Name: this.props.navigation.state.params.NAME,
-            TextInput_Student_Class: this.props.navigation.state.params.CLASS,
             TextInput_Student_PhoneNumber: this.props.navigation.state.params.PHONE_NUMBER,
             TextInput_Student_Email: this.props.navigation.state.params.EMAIL,
         })
@@ -236,16 +237,16 @@ class EditStudentRecordActivity extends React.Component {
         };
 
     UpdateStudentRecord = () => {
-        fetch('https://bizlogic.byethost8.com/Student/UpdateStudentRecord.php', {
+        let student_id = this.state.TextInput_Student_ID;
+        alert(student_id);
+        fetch('http://localhost:8000/student/update/'+student_id, {
             method: 'POST',
             headers: {
                 'Accept': 'application/json',
                 'Content-Type': 'application/json',
             },
-            body: JSON.stringify({
-                student_id: this.state.TextInput_Student_ID,
+            body: JSON.stringify({                
                 student_name: this.state.TextInput_Student_Name,
-                student_class: this.state.TextInput_Student_Class,
                 student_phone_number: this.state.TextInput_Student_PhoneNumber,
                 student_email: this.state.TextInput_Student_Email
             })
@@ -260,15 +261,14 @@ class EditStudentRecordActivity extends React.Component {
     }
 
     DeleteStudentRecord = () => {
-        fetch('https://bizlogic.byethost8.com/Student/DeleteStudentRecord.php', {
-            method: 'POST',
+        let student_id = this.state.TextInput_Student_ID;
+        alert(student_id);
+        fetch('http://localhost:8000/student/delete/'+student_id, {
+            method: 'GET',
             headers: {
                 'Accept': 'application/json',
                 'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-                student_id: this.state.TextInput_Student_ID
-            })
+            }
         }).then((response) => response.json())
             .then((responseJson) => {
                 // Showing response message coming from server after inserting records.
@@ -288,13 +288,6 @@ class EditStudentRecordActivity extends React.Component {
                     placeholder="Student Name Shows Here"
                     value={this.state.TextInput_Student_Name}
                     onChangeText={TextInputValue => this.setState({ TextInput_Student_Name: TextInputValue })}
-                    underlineColorAndroid='transparent'
-                    style={styles.TextInputStyleClass}
-                />
-                <TextInput
-                    placeholder="Student Class Shows Here"
-                    value={this.state.TextInput_Student_Class}
-                    onChangeText={TextInputValue => this.setState({ TextInput_Student_Class: TextInputValue })}
                     underlineColorAndroid='transparent'
                     style={styles.TextInputStyleClass}
                 />
