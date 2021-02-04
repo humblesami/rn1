@@ -10,8 +10,8 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
     },
     list_item: {
-        padding: '5px',
-        margin: '5px',
+        padding: 5,
+        margin: 5,
     },
     MainContainer: {
         alignItems: 'center',
