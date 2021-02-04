@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { SafeAreaView, SectionList, FlatList, StyleSheet, Platform, Text, View, Alert, TextInput, TouchableOpacity, ActivityIndicator } from 'react-native';
+import { FlatList, StyleSheet, Platform, Text, View, TextInput, TouchableOpacity, ActivityIndicator } from 'react-native';
 
 const styles = StyleSheet.create({
     container: {
@@ -9,9 +9,9 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         justifyContent: 'center',
     },
-    list_item:{
-        padding: '5px',        
-        margin: '5px',        
+    list_item: {
+        padding: '5px',
+        margin: '5px',
         boder: '1px solid #ccc'
     },
     MainContainer: {
@@ -56,11 +56,23 @@ const styles = StyleSheet.create({
     }
 });
 
+var student_list = [];
+const Item = ({ title, phone, email }) => (
+    <View style={styles.list_item}>
+        <Text>{title}</Text>
+        <Text>{phone}</Text>
+        <Text>{email}</Text>
+    </View>
+);
+const renderItem = ({ item }) => (
+    <Item title={item.student_name} phone={item.student_phone_number} email={item.student_email} />
+);
+
 class MainActivity extends React.Component {
     static navigationOptions =
-    {
-        title: 'MainActivity',
-    };
+        {
+            title: 'MainActivity',
+        };
 
     constructor(props) {
         super(props)
@@ -73,16 +85,27 @@ class MainActivity extends React.Component {
     }
 
     InsertStudentRecordsToServer = () => {
+        let obj = this;
         let form_data = {};
         form_data.student_name = this.state.TextInput_Student_Name;
         form_data.student_phone_number = this.state.TextInput_Student_PhoneNumber;
         form_data.student_email = this.state.TextInput_Student_Email;
 
-        
         const upload_data = new FormData();
         upload_data.append('student_name', form_data.student_name);
         upload_data.append('student_phone_number', form_data.student_phone_number);
         upload_data.append('student_email', form_data.student_email);
+        let errors = [];
+        for (let key in form_data) {
+            if (!form_data[key]) {
+                errors.push(key + ' is required');
+            }
+        }
+        if (errors.length) {
+            errors = errors.join(',');
+            alert(errors);
+            return;
+        }
         let url = 'http://localhost:8000/student/new/';
         // headers: {
         //     'Content-Type': 'multipart/form-data;',
@@ -90,11 +113,11 @@ class MainActivity extends React.Component {
         fetch(url, {
             method: 'POST',
             body: upload_data
-        }).then(function(res){
-            res.json().then(function(responseJson){
+        }).then(function (res) {
+            res.json().then(function (responseJson) {
                 if (responseJson.status == 'success') {
                     console.log('Uploaded');
-                    alert('Upload Successful');
+                    obj.GoTo_Show_StudentListActivity_Function();
                 }
             });
         });
@@ -137,17 +160,6 @@ class MainActivity extends React.Component {
     }
 }
 
-var student_list = [];
-const Item = ({ title, phone, email }) => (
-    <View style={styles.list_item}>
-      <Text>{title}</Text>
-      <Text>{phone}</Text>
-      <Text>{email}</Text>
-    </View>
-  );
-  const renderItem = ({ item }) => (
-    <Item title={item.student_name} phone={item.student_phone_number} email={item.student_email} />
-  );
 class ShowStudentListActivity extends React.Component {
     constructor(props) {
         super(props);
@@ -161,12 +173,11 @@ class ShowStudentListActivity extends React.Component {
             title: 'ShowStudentListActivity',
         };
 
-    componentDidMount() {        
+    componentDidMount() {
         return fetch('http://localhost:8000/students/list/')
             .then((response) => {
-                response.json().then((responseJson) => {                                    
-                    if(responseJson && responseJson.data)
-                    {
+                response.json().then((responseJson) => {
+                    if (responseJson && responseJson.data) {
                         responseJson = responseJson.data;
                     }
                     student_list = responseJson;
@@ -177,11 +188,11 @@ class ShowStudentListActivity extends React.Component {
                     }, function () {
                         // In this block you can do something with new state.
                     });
-            })
-            .catch((error) => {
-                console.error(error);
+                })
+                    .catch((error) => {
+                        console.error(error);
+                    });
             });
-        });
     }
     GetStudentIDFunction = (id, student_name, student_phone_number, student_email) => {
         this.props.navigation.navigate('Third', {
@@ -202,17 +213,26 @@ class ShowStudentListActivity extends React.Component {
         );
     }
 
+    GoTo_Add_Student_Activity_Function = () => {
+        this.props.navigation.navigate('First');
+    }
+
     render() {
         if (this.state.isLoading) {
             return (
                 <View style={{ flex: 1, paddingTop: 20 }} >
+                    <TouchableOpacity activeOpacity={0.4} style={styles.TouchableOpacityStyle} onPress={this.GoTo_Add_Student_Activity_Function} >
+                        <Text style={styles.TextStyle}> Add STUDENT RECORD IN LIST </Text>
+                    </TouchableOpacity>
                     <ActivityIndicator />
                 </View>
             );
         }
-
         return (
             <View style={styles.container}>
+                <TouchableOpacity activeOpacity={0.4} style={styles.TouchableOpacityStyle} onPress={this.GoTo_Add_Student_Activity_Function} >
+                    <Text style={styles.TextStyle}> Add STUDENT RECORD IN LIST </Text>
+                </TouchableOpacity>
                 <FlatList
                     data={student_list}
                     renderItem={renderItem}
@@ -254,22 +274,20 @@ class EditStudentRecordActivity extends React.Component {
     UpdateStudentRecord = () => {
         let student_id = this.state.TextInput_Student_ID;
         alert(student_id);
-        fetch('http://localhost:8000/student/update/'+student_id, {
+        fetch('http://localhost:8000/student/update/' + student_id, {
             method: 'POST',
             headers: {
                 'Accept': 'application/json',
                 'Content-Type': 'application/json',
             },
-            body: JSON.stringify({                
+            body: JSON.stringify({
                 student_name: this.state.TextInput_Student_Name,
                 student_phone_number: this.state.TextInput_Student_PhoneNumber,
                 student_email: this.state.TextInput_Student_Email
             })
         }).then((response) => response.json())
             .then((responseJson) => {
-
-                //Showing response message coming from server updating records.
-                Alert.alert(responseJson);
+                alert(responseJson);
             }).catch((error) => {
                 console.error(error);
             });
@@ -278,7 +296,7 @@ class EditStudentRecordActivity extends React.Component {
     DeleteStudentRecord = () => {
         let student_id = this.state.TextInput_Student_ID;
         alert(student_id);
-        fetch('http://localhost:8000/student/delete/'+student_id, {
+        fetch('http://localhost:8000/student/delete/' + student_id, {
             method: 'GET',
             headers: {
                 'Accept': 'application/json',
@@ -287,7 +305,7 @@ class EditStudentRecordActivity extends React.Component {
         }).then((response) => response.json())
             .then((responseJson) => {
                 // Showing response message coming from server after inserting records.
-                Alert.alert(responseJson);
+                alert(responseJson);
             }).catch((error) => {
                 console.error(error);
             });

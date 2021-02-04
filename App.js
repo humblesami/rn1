@@ -5,10 +5,6 @@ import { createStackNavigator } from 'react-navigation-stack';
 
 
 import student from './components/student';
-import BoardScreen from './components/board/BoardScreen';
-// import BoardDetailScreen from './components/board/BoardDetailScreen';
-// import AddBoardScreen from './components/board/AddBoardScreen';
-// import EditBoardScreen from './components/board/EditBoardScreen';
 
 
 class HomeScreen extends React.Component {
@@ -21,22 +17,14 @@ class HomeScreen extends React.Component {
     }
 }
 
-const BoardNavigator = createStackNavigator({
-    // MainActivity: student.MainActivity,
-    // BoardDetails: BoardDetailScreen,
-    // AddBoard: AddBoardScreen,
-    // EditBoard: EditBoardScreen,
-    // MainActivity: MainActivity,
-    // ShowStudentListActivity: ShowStudentListActivity,
-    // EditStudentRecordActivity: EditStudentRecordActivity
+const StudentActivityNavigator = createStackNavigator({
     First: student.MainActivity,
     Second: student.ShowStudentListActivity,
     Third: student.EditStudentRecordActivity
-
 });
 
 const AppNavigator = createSwitchNavigator({
-    Board: BoardNavigator,
+    Board: StudentActivityNavigator,
     Home: HomeScreen,
 });
 
