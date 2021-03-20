@@ -1,6 +1,9 @@
 import React from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { FlatList, StyleSheet, Platform, Text, View, TextInput, TouchableOpacity, ActivityIndicator } from 'react-native';
+import * as SQLite from 'expo-sqlite';
+
+const db = SQLite.openDatabase("db.db");
 
 const styles = StyleSheet.create({
     container: {
@@ -83,6 +86,16 @@ class MainActivity extends React.Component {
         }
     }
 
+    componentDidMount() {
+        let obj = this;
+        db.transaction(tx => {
+            tx.executeSql(
+                "create table if not exists students (id integer primary key not null, student_name text, student_phone_number text, student_email text);"
+            );
+        });
+    }
+    
+
     InsertStudentRecordsToServer = () => {
         let obj = this;
         let form_data = {};
@@ -96,10 +109,7 @@ class MainActivity extends React.Component {
             student_id = student_list[student_list.length - 1].id + 1;
         }
         form_data.id = "" + student_id;
-        const upload_data = new FormData();
-        upload_data.append('student_name', form_data.student_name);
-        upload_data.append('student_phone_number', form_data.student_phone_number);
-        upload_data.append('student_email', form_data.student_email);
+
         let errors = [];
         for (let key in form_data) {
             if (!form_data[key]) {
@@ -113,6 +123,24 @@ class MainActivity extends React.Component {
         }
         
         student_list.push(form_data);
+
+        db.transaction(
+            tx => {
+              tx.executeSql(
+                  "insert into students (student_name, student_phone_number,student_email) values (?, ?, ?)", 
+                  [
+                      form_data.student_name,
+                      form_data.student_phone_number,
+                      form_data.student_email
+                ]
+              );
+              tx.executeSql("select * from students", [], (_, { rows }) =>
+                console.log(rows)
+                );
+            },
+            null,
+            null
+        );
         
         (async () => {
             await AsyncStorage.setItem(
@@ -149,6 +177,7 @@ class MainActivity extends React.Component {
         this.props.navigation.navigate('Second');
     }
 
+    
     render() {
         return (
             <View style={styles.MainContainer}>
@@ -197,6 +226,31 @@ class ShowStudentListActivity extends React.Component {
 
     componentDidMount() {
         let obj = this;
+        db.transaction(tx => {
+            tx.executeSql(
+                "create table if not exists students (id integer primary key not null, student_name text, student_phone_number text, student_email text);"
+            );
+        });
+
+        db.transaction(
+            tx => {
+                tx.executeSql("select * from students", [], (_, { rows }) =>{
+                console.log(JSON.stringify(rows));
+                
+                obj.setState({
+                    isLoading: false,
+                    dataSource: rows,
+                }, function () {
+                    
+                });
+            }
+                
+              );
+            },
+            null,
+            null
+        );
+
         (async () => {
             //await AsyncStorage.removeItem('students/list');
             let item_list = await AsyncStorage.getItem('students/list');
@@ -204,12 +258,13 @@ class ShowStudentListActivity extends React.Component {
                 item_list = '[]';
             }
             student_list = JSON.parse(item_list);
-            obj.setState({
-                isLoading: false,
-                dataSource: student_list,
-            }, function () {
-                // In this block you can do something with new state.
-            });
+
+            // obj.setState({
+            //     isLoading: false,
+            //     dataSource: student_list,
+            // }, function () {
+            //     // In this block you can do something with new state.
+            // });
         })().catch(err => {
             console.error(err);
         });
