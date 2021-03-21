@@ -18,9 +18,9 @@ class HomeScreen extends React.Component {
 }
 
 const StudentActivityNavigator = createStackNavigator({
-    First: student.MainActivity,
-    Second: student.ShowStudentListActivity,
-    Third: student.EditStudentRecordActivity
+    AddStudent: student.MainActivity,
+    ShowStudents: student.ShowStudentListActivity,
+    EditStudent: student.EditStudentRecordActivity
 });
 
 const AppNavigator = createSwitchNavigator({
