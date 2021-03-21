@@ -77,10 +77,10 @@ const renderMyItem = (item, obj) => {
     )
 };
 
-class MainActivity extends React.Component {
+class AddStudentActivity extends React.Component {
     static navigationOptions =
         {
-            title: 'MainActivity',
+            title: 'AddActivity',
         };
 
     constructor(props) {
@@ -477,14 +477,13 @@ class EditStudentRecordActivity extends React.Component {
                     <Text style={styles.TextStyle}> Back To List </Text>
                 </TouchableOpacity>
             </View>
-        );
+       );
     }
-
 }
 
 const student = {
-    MainActivity: MainActivity,
     ShowStudentListActivity: ShowStudentListActivity,
+    AddStudentActivity: AddStudentActivity,    
     EditStudentRecordActivity: EditStudentRecordActivity
 }
 
