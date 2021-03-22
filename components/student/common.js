@@ -1,7 +1,7 @@
 import { StyleSheet, Platform } from 'react-native';
 import * as SQLite from 'expo-sqlite';
 
-const db = SQLite.openDatabase("student_activity.db");
+const db = SQLite.openDatabase("student_activity_boiler.db");
 
 const styles = StyleSheet.create({
     container: {

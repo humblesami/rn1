@@ -96,14 +96,7 @@ class EditStudentActivity extends React.Component {
                         obj.state.email,
                         obj.state.id
                     ],
-                    (tx1, results) => {
-                        if (results.rowsAffected > 0) {
-                            obj.props.navigation.navigate('ShowStudents');
-                        }
-                        else {
-                            console.log('failed ', results);
-                        }
-                    },
+                    (tx1, results) => null,
                     (er) => {
                         console.log(212, 'failed update due to ', er, ' in ', stmt);
                     }
@@ -142,11 +135,15 @@ class EditStudentActivity extends React.Component {
                     "delete from students where id=?",
                     [
                         student_id
-                    ],
-                    function (res) {
-                        obj.props.navigation.navigate('ShowStudents');
+                    ],(tx1, results) => null,
+                    (er) => {
+                        console.log(212, 'failed delete due to ', er, ' in ', stmt);
                     }
                 );
+            }, null,
+            (re2) => {
+                obj.props.navigation.state.params.callback('from delete');
+                obj.props.navigation.navigate('ShowStudents');
             }
         );
     }

@@ -1,5 +1,5 @@
 import React from 'react';
-import { FlatList, Text, View, TouchableOpacity, ActivityIndicator } from 'react-native';
+import { FlatList, Text, View, TouchableOpacity, ActivityIndicator, Button } from 'react-native';
 
 import { db, styles } from './common';
 
@@ -14,12 +14,12 @@ const Item = ({ title, phone, email }) => (
 
 const renderMyItem = (item, obj) => {
     return (
-        <TouchableOpacity>            
+        <TouchableOpacity>
             <Item title={item.student_name} phone={item.student_phone_number} email={item.student_email} />
-                <button onClick={() => {
+                <Button title="Click" onPress={() => {
                     let params = { callback: obj.on_student_updated.bind(obj), student: item }
                     obj.props.navigation.navigate('EditStudent', params);
-                }}>Click</button>
+                }}></Button>
         </TouchableOpacity>
     )
 };
@@ -36,7 +36,7 @@ class ShowStudentActivity extends React.Component {
 
     static navigationOptions =
         {
-            title: 'ShowStudentList--',
+            title: 'uuu7',
         };
 
     
@@ -56,12 +56,21 @@ class ShowStudentActivity extends React.Component {
         console.log('Loading students');
         db.transaction(
             tx => {
-                tx.executeSql("select * from students", [], (tx1, res) => {
-                    let rows = JSON.stringify(res.rows);
-                    rows = JSON.parse(rows);
+                tx.executeSql("select * from students", [], (tx1, res) => {                    
+                    
                     let my_list = [];
-                    for (let i in rows) {
-                        my_list.push(rows[i]);
+                    if(res.rows){
+                        if(res.rows._array)
+                        {
+                            my_list = res.rows._array;
+                        }
+                        else{
+                            if(res.rows.length){
+                                for(let i in res.rows){
+                                    my_list.push(res.rows.item(i));
+                                }
+                            }
+                        }
                     }
                     obj.setState({
                         student_list: my_list,
@@ -152,7 +161,7 @@ class ShowStudentActivity extends React.Component {
         return (
             <View style={styles.container}>
                 <TouchableOpacity activeOpacity={0.4} style={styles.TouchableOpacityStyle} onPress={this.GoTo_Add_Student_Activity_Function} >
-                    <Text style={styles.TextStyle}> Add STUDENT RECORD IN LIST </Text>
+                    <Text style={styles.TextStyle}> Add STUDENT RECORD </Text>
                 </TouchableOpacity>
                 <FlatList
                     data={obj.state.student_list}
