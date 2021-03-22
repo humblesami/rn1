@@ -36,7 +36,7 @@ class ShowStudentActivity extends React.Component {
 
     static navigationOptions =
         {
-            title: 'ShowStudentListActivity',
+            title: 'ShowStudentList--',
         };
 
     
@@ -160,7 +160,7 @@ class ShowStudentActivity extends React.Component {
                         item.method_before_exit = obj.on_student_update;
                         return renderMyItem(item, obj);
                     }}
-                    keyExtractor={item => item.id.toString()}
+                    keyExtractor={(item, index) => ""+index}
                 />
             </View>
         );

@@ -94,7 +94,7 @@ class AddStudentActivity extends React.Component {
     render() {
         return (
             <View style={styles.MainContainer}>
-                <Text style={{ fontSize: 20, textAlign: 'center', marginBottom: 7 }}>Student Registration Form 0</Text>
+                <Text style={{ fontSize: 20, textAlign: 'center', marginBottom: 7 }}>Student Registration Form</Text>
                 <TextInput
                     placeholder="Enter Student Name"
                     onChangeText={TextInputValue => this.setState({ name: TextInputValue })}
