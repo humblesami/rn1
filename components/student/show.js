@@ -1,7 +1,29 @@
 import React from 'react';
 import { FlatList, Text, View, TouchableOpacity, ActivityIndicator } from 'react-native';
 
-import { db, styles, renderMyItem } from './common';
+import { db, styles } from './common';
+
+
+const Item = ({ title, phone, email }) => (
+    <View style={styles.list_item}>
+        <Text>{title}</Text>
+        <Text>{phone}</Text>
+        <Text>{email}</Text>
+    </View>
+);
+
+const renderMyItem = (item, obj) => {
+    return (
+        <TouchableOpacity>            
+            <Item title={item.student_name} phone={item.student_phone_number} email={item.student_email} />
+                <button onClick={() => {
+                    let params = { callback: obj.on_student_updated.bind(obj), student: item }
+                    obj.props.navigation.navigate('EditStudent', params);
+                }}>Click</button>
+        </TouchableOpacity>
+    )
+};
+
 
 class ShowStudentActivity extends React.Component {
     constructor(props) {
@@ -50,8 +72,8 @@ class ShowStudentActivity extends React.Component {
         );
     }
 
-    callback(from_where) {
-        console.log('Callback Called', from_where);
+    on_student_updated(from_where) {
+        console.log('On student update Called', from_where);
         this.load_students_list();
     }
 
@@ -112,7 +134,9 @@ class ShowStudentActivity extends React.Component {
     }
 
     GoTo_Add_Student_Activity_Function = () => {
-        this.props.navigation.navigate('AddStudent');
+        let obj = this;
+        let params = { callback: obj.on_student_updated.bind(obj) }
+        obj.props.navigation.navigate('AddStudent', params);        
     }
 
     render() {
@@ -135,8 +159,7 @@ class ShowStudentActivity extends React.Component {
                     renderItem={({ item }) => {
                         item.method_before_exit = obj.on_student_update;
                         return renderMyItem(item, obj);
-                    }
-                    }
+                    }}
                     keyExtractor={item => item.id.toString()}
                 />
             </View>

@@ -109,7 +109,7 @@ class EditStudentActivity extends React.Component {
                     }
                 );
             }, null,
-            (re2) => {                
+            (re2) => {
                 obj.props.navigation.state.params.callback('from edit');
                 obj.props.navigation.navigate('ShowStudents');
             }

@@ -1,35 +1,12 @@
-import React from 'react';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import { FlatList, StyleSheet, Platform, Text, View, TextInput, TouchableOpacity, ActivityIndicator } from 'react-native';
+import { StyleSheet, Platform } from 'react-native';
 import * as SQLite from 'expo-sqlite';
 
 const db = SQLite.openDatabase("student_activity.db");
 
-var student_list = [];
-const Item = ({ title, phone, email }) => (
-    <View style={styles.list_item}>
-        <Text>{title}</Text>
-        <Text>{phone}</Text>
-        <Text>{email}</Text>
-    </View>
-);
-
-const renderMyItem = (item, obj) => {    
-    // console.log(item);
-    return (
-        <TouchableOpacity>            
-            <Item title={item.student_name} phone={item.student_phone_number} email={item.student_email} />
-                <button onClick={() => {
-                    let params = { callback: obj.callback.bind(obj), student: item }
-                    obj.props.navigation.navigate('EditStudent', params);
-                }}>Click</button>
-        </TouchableOpacity>
-    )
-};
-
 const styles = StyleSheet.create({
     container: {
         flex: 1,
+        paddingTop: 15,
         backgroundColor: '#fff',
         alignItems: 'center',
         justifyContent: 'center',
@@ -82,7 +59,5 @@ const styles = StyleSheet.create({
 
 export {
     db,
-    styles,
-    renderMyItem,
-    student_list
+    styles
 }

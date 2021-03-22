@@ -13,9 +13,9 @@ class AddStudentActivity extends React.Component {
         super(props)
 
         this.state = {
-            TextInput_Student_Name: '',
-            TextInput_Student_PhoneNumber: '',
-            TextInput_Student_Email: '',
+            name: '',
+            phone_number: '',
+            email: '',
         }
     }
 
@@ -23,9 +23,9 @@ class AddStudentActivity extends React.Component {
     InsertStudentRecordsToServer = () => {
         let obj = this;
         let form_data = {};
-        form_data.student_name = this.state.TextInput_Student_Name;
-        form_data.student_phone_number = this.state.TextInput_Student_PhoneNumber;
-        form_data.student_email = this.state.TextInput_Student_Email;
+        form_data.student_name = this.state.name;
+        form_data.student_phone_number = this.state.phone_number;
+        form_data.student_email = this.state.email;
 
         let errors = [];
         for (let key in form_data) {
@@ -50,6 +50,7 @@ class AddStudentActivity extends React.Component {
                     ]
                 )
             }, null, ()=>{
+                obj.props.navigation.state.params.callback('from add');
                 obj.props.navigation.navigate('ShowStudents');
             }
         );
@@ -96,19 +97,19 @@ class AddStudentActivity extends React.Component {
                 <Text style={{ fontSize: 20, textAlign: 'center', marginBottom: 7 }}>Student Registration Form 0</Text>
                 <TextInput
                     placeholder="Enter Student Name"
-                    onChangeText={TextInputValue => this.setState({ TextInput_Student_Name: TextInputValue })}
+                    onChangeText={TextInputValue => this.setState({ name: TextInputValue })}
                     underlineColorAndroid='transparent'
                     style={styles.TextInputStyleClass}
                 />
                 <TextInput
                     placeholder="Enter Student Phone Number"
-                    onChangeText={TextInputValue => this.setState({ TextInput_Student_PhoneNumber: TextInputValue })}
+                    onChangeText={TextInputValue => this.setState({ phone_number: TextInputValue })}
                     underlineColorAndroid='transparent'
                     style={styles.TextInputStyleClass}
                 />
                 <TextInput
                     placeholder="Enter Student Email"
-                    onChangeText={TextInputValue => this.setState({ TextInput_Student_Email: TextInputValue })}
+                    onChangeText={TextInputValue => this.setState({ email: TextInputValue })}
                     underlineColorAndroid='transparent'
                     style={styles.TextInputStyleClass}
                 />
