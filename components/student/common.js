@@ -3,7 +3,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { FlatList, StyleSheet, Platform, Text, View, TextInput, TouchableOpacity, ActivityIndicator } from 'react-native';
 import * as SQLite from 'expo-sqlite';
 
-const db = SQLite.openDatabase("db.db");
+const db = SQLite.openDatabase("student_activity.db");
 
 var student_list = [];
 const Item = ({ title, phone, email }) => (
@@ -19,7 +19,10 @@ const renderMyItem = (item, obj) => {
     return (
         <TouchableOpacity>            
             <Item title={item.student_name} phone={item.student_phone_number} email={item.student_email} />
-                <button onClick={() => obj.props.navigation.navigate('EditStudent', item)}>Click</button>
+                <button onClick={() => {
+                    let params = { callback: obj.callback.bind(obj), student: item }
+                    obj.props.navigation.navigate('EditStudent', params);
+                }}>Click</button>
         </TouchableOpacity>
     )
 };

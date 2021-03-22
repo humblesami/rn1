@@ -8,22 +8,55 @@ class EditStudentActivity extends React.Component {
     constructor(props) {
         super(props)
         this.state = {
-            TextInput_Student_ID: '',
-            TextInput_Student_Name: '',
-            TextInput_Student_PhoneNumber: '',
-            TextInput_Student_Email: '',
+            id: '',
+            name: '',
+            phone_number: '',
+            email: '',
         }
     }
 
     componentDidMount() {
+        let obj = this;
+        // Received Student Details Sent From Previous Activity and Set Into State.        
+        let params = this.props.navigation.state.params;
+        let student = params.student;
 
-        // Received Student Details Sent From Previous Activity and Set Into State.
         this.setState({
-            TextInput_Student_ID: this.props.navigation.state.params.id,
-            TextInput_Student_Name: this.props.navigation.state.params.student_name,
-            TextInput_Student_PhoneNumber: this.props.navigation.state.params.student_phone_number,
-            TextInput_Student_Email: this.props.navigation.state.params.student_email,
+            id: student.id,
+            name: student.student_name,
+            phone_number: student.student_phone_number,
+            email: student.student_email
         });
+    }
+
+    test_db_sql(){
+        let obj = this;
+        db.transaction(
+            tx => {
+                
+                tx.executeSql(
+                    "select * from students where id=?",
+                    [
+                        obj.state.id
+                    ],
+                    (tx1, results) => {
+                        if(results.rows.length)
+                        {
+                            console.log('Row found is ', results.rows[0]);
+                        }
+                        else{
+                            console.log('No rows')
+                        }
+                    },
+                    (er) => {
+                        console.log(212, 'failed feathing due to ', er);
+                    }
+                );
+            }, null,
+            (re2) => {
+                // obj.props.navigation.navigate('ShowStudents');
+            }
+        );
     }
 
     static navigationOptions =
@@ -32,7 +65,7 @@ class EditStudentActivity extends React.Component {
         };
 
     UpdateStudentRecord = () => {
-        // let student_id = this.state.TextInput_Student_ID;
+        // let student_id = this.state.id;
         // alert(student_id);
         // fetch('http://localhost:8000/student/update/' + student_id, {
         //     method: 'POST',
@@ -41,9 +74,9 @@ class EditStudentActivity extends React.Component {
         //         'Content-Type': 'application/json',
         //     },
         //     body: JSON.stringify({
-        //         student_name: this.state.TextInput_Student_Name,
-        //         student_phone_number: this.state.TextInput_Student_PhoneNumber,
-        //         student_email: this.state.TextInput_Student_Email
+        //         student_name: this.state.name,
+        //         student_phone_number: this.state.phone_number,
+        //         student_email: this.state.email
         //     })
         // }).then((response) => response.json())
         //     .then((responseJson) => {
@@ -52,17 +85,16 @@ class EditStudentActivity extends React.Component {
         //         console.error(error);
         //     });
         let obj = this;
+        //obj.test_db_sql();
         db.transaction(
-            tx => {
-                let stmt = "update students set student_name='" + obj.state.TextInput_Student_Name + "'";
-                stmt += ",student_phone_number='" + obj.state.TextInput_Student_Name + "'";
-                stmt += ",student_email='" + obj.state.TextInput_Student_Name + "'";
+            tx => {                
                 tx.executeSql(
-                    "update students set student_name=? student_phone_number=? student_email=?",
+                    "update students set student_name=?, student_phone_number=?, student_email=? where id=?",
                     [
-                        obj.state.TextInput_Student_Name,
-                        obj.state.TextInput_Student_PhoneNumber,
-                        obj.state.TextInput_Student_Email
+                        obj.state.name,
+                        obj.state.phone_number,
+                        obj.state.email,
+                        obj.state.id
                     ],
                     (tx1, results) => {
                         if (results.rowsAffected > 0) {
@@ -73,18 +105,19 @@ class EditStudentActivity extends React.Component {
                         }
                     },
                     (er) => {
-                        console.log(212, 'failed due to ', er, ' in ', stmt);
+                        console.log(212, 'failed update due to ', er, ' in ', stmt);
                     }
                 );
             }, null,
-            (re2) => {
-                //obj.props.navigation.navigate('ShowStudents');
+            (re2) => {                
+                obj.props.navigation.state.params.callback('from edit');
+                obj.props.navigation.navigate('ShowStudents');
             }
         );
     }
 
     DeleteStudentRecord = () => {
-        // let student_id = this.state.TextInput_Student_ID;
+        // let student_id = this.state.id;
         // alert(student_id);
         // fetch('http://localhost:8000/student/delete/' + student_id, {
         //     method: 'GET',
@@ -101,7 +134,7 @@ class EditStudentActivity extends React.Component {
         //     });
         // this.props.navigation.navigate('First');
         let obj = this;
-        let student_id = this.state.TextInput_Student_ID;
+        let student_id = this.state.id;
         console.log('id is ', student_id);
         db.transaction(
             tx => {
@@ -125,22 +158,22 @@ class EditStudentActivity extends React.Component {
                 <Text style={{ fontSize: 20, textAlign: 'center', marginBottom: 7 }}> Edit Student Record Form </Text>
                 <TextInput
                     placeholder="Student Name Shows Here"
-                    value={this.state.TextInput_Student_Name}
-                    onChangeText={TextInputValue => this.setState({ TextInput_Student_Name: TextInputValue })}
+                    value={this.state.name}
+                    onChangeText={TextInputValue => this.setState({ name: TextInputValue })}
                     underlineColorAndroid='transparent'
                     style={styles.TextInputStyleClass}
                 />
                 <TextInput
                     placeholder="Student Phone Number Shows Here"
-                    value={this.state.TextInput_Student_PhoneNumber}
-                    onChangeText={TextInputValue => this.setState({ TextInput_Student_PhoneNumber: TextInputValue })}
+                    value={this.state.phone_number}
+                    onChangeText={TextInputValue => this.setState({ phone_number: TextInputValue })}
                     underlineColorAndroid='transparent'
                     style={styles.TextInputStyleClass}
                 />
                 <TextInput
                     placeholder="Student Email Shows Here"
-                    value={this.state.TextInput_Student_Email}
-                    onChangeText={TextInputValue => this.setState({ TextInput_Student_Email: TextInputValue })}
+                    value={this.state.email}
+                    onChangeText={TextInputValue => this.setState({ email: TextInputValue })}
                     underlineColorAndroid='transparent'
                     style={styles.TextInputStyleClass}
                 />

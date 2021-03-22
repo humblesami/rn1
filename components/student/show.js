@@ -20,35 +20,43 @@ class ShowStudentActivity extends React.Component {
     
     component_loaded(load_type){
         let obj = this;
-        console.log('load type', load_type);
+        console.log('Student show worked with load type', load_type);
         db.transaction(tx => {
             tx.executeSql(
                 "create table if not exists students (id integer primary key not null, student_name text, student_phone_number text, student_email text);"
             );
         });
+        obj.load_students_list();
+    }
 
+    load_students_list(){
+        let obj = this;
+        console.log('Loading students');
         db.transaction(
             tx => {
-                tx.executeSql("select * from students", [], (_, { rows }) => {
-                    rows = JSON.stringify(rows);
+                tx.executeSql("select * from students", [], (tx1, res) => {
+                    let rows = JSON.stringify(res.rows);
                     rows = JSON.parse(rows);
                     let my_list = [];
                     for (let i in rows) {
                         my_list.push(rows[i]);
                     }
-                    console.log(obj.state.student_list.length, obj.state.student_list, 'Students before DB');
                     obj.setState({
                         student_list: my_list,
                         isLoading: false,
                     });
-                    console.log(obj.state.student_list.length, obj.state.student_list, 'Students from DB');
                 });
             }
         );
     }
 
+    callback(from_where) {
+        console.log('Callback Called', from_where);
+        this.load_students_list();
+    }
+
     componentDidUpdate(){
-        console.log('updaing');
+        // console.log('updating');
         //this.component_loaded('updated');
     }
 
@@ -116,7 +124,7 @@ class ShowStudentActivity extends React.Component {
                 </View>
             );
         }
-        console.log(obj.state.student_list.length, obj.state.student_list, 'Students being Shown');
+        console.log(obj.state.student_list, 'Students being Shown');
         return (
             <View style={styles.container}>
                 <TouchableOpacity activeOpacity={0.4} style={styles.TouchableOpacityStyle} onPress={this.GoTo_Add_Student_Activity_Function} >
@@ -125,6 +133,7 @@ class ShowStudentActivity extends React.Component {
                 <FlatList
                     data={obj.state.student_list}
                     renderItem={({ item }) => {
+                        item.method_before_exit = obj.on_student_update;
                         return renderMyItem(item, obj);
                     }
                     }
