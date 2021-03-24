@@ -60,6 +60,7 @@ class ShowStudentActivity extends React.Component {
                     
                     let my_list = [];
                     if(res.rows){
+                        // console.log(res.rows);
                         if(res.rows._array)
                         {
                             my_list = res.rows._array;
@@ -67,7 +68,10 @@ class ShowStudentActivity extends React.Component {
                         else{
                             if(res.rows.length){
                                 for(let i in res.rows){
-                                    my_list.push(res.rows.item(i));
+                                    if(!isNaN(i))
+                                    {
+                                        my_list.push(res.rows.item(i));
+                                    }
                                 }
                             }
                         }
@@ -157,7 +161,7 @@ class ShowStudentActivity extends React.Component {
                 </View>
             );
         }
-        console.log(obj.state.student_list, 'Students being Shown');
+        // console.log(obj.state.student_list, 'Students being Shown');
         return (
             <View style={styles.container}>
                 <TouchableOpacity activeOpacity={0.4} style={styles.TouchableOpacityStyle} onPress={this.GoTo_Add_Student_Activity_Function} >
