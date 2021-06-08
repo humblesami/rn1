@@ -34,6 +34,33 @@ class ShowStudentActivity extends React.Component {
         }
     }
 
+    render() {
+        let obj = this;
+        if (this.state.isLoading) {
+            return (
+                <View style={{ flex: 1, paddingTop: 20 }} >
+                    <ActivityIndicator />
+                </View>
+            );
+        }
+        // console.log(obj.state.student_list, 'Students being Shown');
+        return (
+            <View style={styles.container}>
+                <TouchableOpacity activeOpacity={0.4} style={styles.TouchableOpacityStyle} onPress={this.GoTo_Add_Student_Activity_Function} >
+                    <Text style={styles.TextStyle}> Add STUDENT RECORD </Text>
+                </TouchableOpacity>
+                <FlatList
+                    data={obj.state.student_list}
+                    renderItem={({ item }) => {
+                        item.method_before_exit = obj.on_student_update;
+                        return renderMyItem(item, obj);
+                    }}
+                    keyExtractor={(item, index) => ""+index}
+                />
+            </View>
+        );
+    }
+
     static navigationOptions =
         {
             title: 'uuu7',
@@ -97,43 +124,47 @@ class ShowStudentActivity extends React.Component {
 
     componentDidMount() {
         this.component_loaded('init');
-        // (async () => {
-        //     //await AsyncStorage.removeItem('students/list');
-        //     let item_list = await AsyncStorage.getItem('students/list');
-        //     if (!item_list) {
-        //         item_list = '[]';
-        //     }
-        //     student_list = JSON.parse(item_list);
+        //this.async_load()
+    }
 
-        //     // obj.setState({
-        //     //     isLoading: false,
-        //     //     dataSource: student_list,
-        //     // }, function () {
-        //     //     // In this block you can do something with new state.
-        //     // });
-        // })().catch(err => {
-        //     console.error(err);
-        // });
-        // return fetch('http://localhost:8000/students/list/')
-        //     .then((response) => {
-        //         response.json().then((responseJson) => {
-        //             if (responseJson && responseJson.data) {
-        //                 responseJson = responseJson.data;
-        //             }
-        //             student_list = responseJson;
-        //             console.log(student_list, 888);
-        //             this.setState({
-        //                 isLoading: false,
-        //                 dataSource: student_list,
-        //             }, function () {
-        //                 // In this block you can do something with new state.
-        //             });
-        //         }).catch((error) => {
-        //             console.error(error);
-        //         });
-        //     }).catch((error) => {
-        //         console.error(error);
-        //     });
+    async_load(){
+        (async () => {
+            //await AsyncStorage.removeItem('students/list');
+            let item_list = await AsyncStorage.getItem('students/list');
+            if (!item_list) {
+                item_list = '[]';
+            }
+            student_list = JSON.parse(item_list);
+
+            obj.setState({
+                isLoading: false,
+                dataSource: student_list,
+            }, function () {
+                // In this block you can do something with new state.
+            });
+        })().catch(err => {
+            console.error(err);
+        });
+        return fetch('http://localhost:8000/students/list/')
+            .then((response) => {
+                response.json().then((responseJson) => {
+                    if (responseJson && responseJson.data) {
+                        responseJson = responseJson.data;
+                    }
+                    student_list = responseJson;
+                    console.log(student_list, 888);
+                    this.setState({
+                        isLoading: false,
+                        dataSource: student_list,
+                    }, function () {
+                        // In this block you can do something with new state.
+                    });
+                }).catch((error) => {
+                    console.error(error);
+                });
+            }).catch((error) => {
+                console.error(error);
+            });
     }
     ListViewItemSeparator = () => {
         return (
@@ -150,34 +181,7 @@ class ShowStudentActivity extends React.Component {
         let obj = this;
         let params = { callback: obj.on_student_updated.bind(obj) }
         obj.props.navigation.navigate('AddStudent', params);        
-    }
-
-    render() {
-        let obj = this;
-        if (this.state.isLoading) {
-            return (
-                <View style={{ flex: 1, paddingTop: 20 }} >
-                    <ActivityIndicator />
-                </View>
-            );
-        }
-        // console.log(obj.state.student_list, 'Students being Shown');
-        return (
-            <View style={styles.container}>
-                <TouchableOpacity activeOpacity={0.4} style={styles.TouchableOpacityStyle} onPress={this.GoTo_Add_Student_Activity_Function} >
-                    <Text style={styles.TextStyle}> Add STUDENT RECORD </Text>
-                </TouchableOpacity>
-                <FlatList
-                    data={obj.state.student_list}
-                    renderItem={({ item }) => {
-                        item.method_before_exit = obj.on_student_update;
-                        return renderMyItem(item, obj);
-                    }}
-                    keyExtractor={(item, index) => ""+index}
-                />
-            </View>
-        );
-    }
+    }    
 }
 
 export default ShowStudentActivity;
