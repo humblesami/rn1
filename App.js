@@ -1,22 +1,34 @@
 import React from 'react';
-import { createSwitchNavigator, createAppContainer } from "react-navigation";
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import { Text, View, } from 'react-native';
+import { NavigationContainer } from '@react-navigation/native';
+import { styles } from './components/style';
 
-
-import StudentActivityNavigator from './components/student/index';
-import TeacherActivityNavigator from './components/teacher/index';
-
-
-const tabs = createBottomTabNavigator();
-
-const AppNavigator = createSwitchNavigator({
-    AnyName32: StudentActivityNavigator,
-    OtherName: TeacherActivityNavigator,
-});
-
-const AppContainer = createAppContainer(AppNavigator);
-export default class App extends React.Component {
-    render() {
-        return <AppContainer />;
-    }
-}
+function HomeScreen() {
+    return (
+      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+        <Text>Home!</Text>
+      </View>
+    );
+  }
+  
+  function SettingsScreen() {
+    return (
+      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+        <Text>Settings!</Text>
+      </View>
+    );
+  }
+  
+  const Tab = createBottomTabNavigator();
+  
+  export default function App() {
+    return (
+      <NavigationContainer style={styles.container}>
+        <Tab.Navigator style={styles.container}>
+          <Tab.Screen name="Home" component={HomeScreen} style={styles.container} />
+          <Tab.Screen name="Settings" component={SettingsScreen} />
+        </Tab.Navigator>
+      </NavigationContainer>
+    );
+  }

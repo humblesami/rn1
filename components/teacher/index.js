@@ -3,7 +3,7 @@ import { createStackNavigator } from 'react-navigation-stack';
 
 
 const TeacherActivityNavigator = createStackNavigator({    
-    ShowStudents: ShowTeacherActivity,
+    MyChoiceName: ShowTeacherActivity,
 });
 // The activity/component at top will be show by default
 

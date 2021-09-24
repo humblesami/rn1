@@ -51,7 +51,7 @@ class AddStudentActivity extends React.Component {
                 )
             }, null, ()=>{
                 obj.props.navigation.state.params.callback('from add');
-                obj.props.navigation.navigate('ShowStudents');
+                obj.props.navigation.navigate('ShowSudents');
             }
         );
 
@@ -87,7 +87,7 @@ class AddStudentActivity extends React.Component {
     }
 
     GoTo_Show_StudentListActivity_Function = () => {
-        this.props.navigation.navigate('ShowStudents');
+        this.props.navigation.navigate('ShowSudents');
     }
 
 

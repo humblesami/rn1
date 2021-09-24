@@ -60,12 +60,6 @@ class ShowStudentActivity extends React.Component {
             </View>
         );
     }
-
-    static navigationOptions =
-        {
-            title: 'Students Only List',
-        };
-
     
     component_loaded(load_type){
         let obj = this;

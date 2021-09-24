@@ -1,7 +1,4 @@
-import { StyleSheet, Platform } from 'react-native';
-import * as SQLite from 'expo-sqlite';
-
-const db = SQLite.openDatabase("student_activity_boiler.db");
+import { StyleSheet } from 'react-native';
 
 const styles = StyleSheet.create({
     container: {
@@ -10,6 +7,9 @@ const styles = StyleSheet.create({
         backgroundColor: '#fff',
         alignItems: 'center',
         justifyContent: 'center',
+        paddingBottom:10,
+        marginBottom: 10,
+        backgroundColor: '#000000'
     },
     list_item: {
         padding: 5,
@@ -20,12 +20,6 @@ const styles = StyleSheet.create({
         flex: 1,
         paddingTop: 30,
         backgroundColor: '#fff'
-    },
-    MainContainer_For_Show_StudentList_Activity: {
-        flex: 1,
-        paddingTop: (Platform.OS == 'ios') ? 20 : 0,
-        marginLeft: 5,
-        marginRight: 5
     },
     TextInputStyleClass: {
         textAlign: 'center',
@@ -58,6 +52,5 @@ const styles = StyleSheet.create({
 });
 
 export {
-    db,
     styles
 }

@@ -1,7 +1,7 @@
 import React from 'react';
 import { FlatList, Text, View, TouchableOpacity, ActivityIndicator, Button } from 'react-native';
 
-import { db, styles } from '../common';
+import { db, styles } from '../db';
 
 
 const Item = ({ title, phone, email }) => (

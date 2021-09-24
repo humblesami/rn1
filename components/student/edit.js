@@ -3,7 +3,7 @@ import { Text, View, TextInput, TouchableOpacity } from 'react-native';
 
 import { db, styles } from '../common';
 
-class EditStudentActivity extends React.Component {
+class EditaStudentActivity extends React.Component {
 
     constructor(props) {
         super(props)
@@ -54,7 +54,7 @@ class EditStudentActivity extends React.Component {
                 );
             }, null,
             (re2) => {
-                // obj.props.navigation.navigate('ShowStudents');
+                // obj.props.navigation.navigate('ShowSudents');
             }
         );
     }
@@ -104,7 +104,7 @@ class EditStudentActivity extends React.Component {
             }, null,
             (re2) => {
                 obj.props.navigation.state.params.callback('from edit');
-                obj.props.navigation.navigate('ShowStudents');
+                obj.props.navigation.navigate('ShowSudents');
             }
         );
     }
@@ -143,7 +143,7 @@ class EditStudentActivity extends React.Component {
             }, null,
             (re2) => {
                 obj.props.navigation.state.params.callback('from delete');
-                obj.props.navigation.navigate('ShowStudents');
+                obj.props.navigation.navigate('ShowSudents');
             }
         );
     }
@@ -182,7 +182,7 @@ class EditStudentActivity extends React.Component {
                 </TouchableOpacity>
                 <TouchableOpacity activeOpacity={0.4} style={styles.TouchableOpacityStyle} onPress={
                     function () {
-                        obj.props.navigation.navigate('ShowStudents')
+                        obj.props.navigation.navigate('ShowSudents')
                     }
                 } >
                     <Text style={styles.TextStyle}> Back To List </Text>
@@ -192,4 +192,4 @@ class EditStudentActivity extends React.Component {
     }
 }
 
-export default EditStudentActivity;
+export default EditaStudentActivity;
