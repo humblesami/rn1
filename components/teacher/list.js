@@ -15,17 +15,13 @@ const Item = ({ title, phone, email }) => (
 const renderMyItem = (item, obj) => {
     return (
         <TouchableOpacity>
-            <Item title={item.student_name} phone={item.student_phone_number} email={item.student_email} />
-                <Button title="Click" onPress={() => {
-                    let params = { callback: obj.on_student_updated.bind(obj), student: item }
-                    obj.props.navigation.navigate('EditStudent', params);
-                }}></Button>
+            <Item title={item.student_name} phone={item.student_phone_number} email={item.student_email} />                
         </TouchableOpacity>
     )
 };
 
 
-class ShowStudentActivity extends React.Component {
+class ShowTeacherActivity extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
@@ -45,10 +41,7 @@ class ShowStudentActivity extends React.Component {
         }
         // console.log(obj.state.student_list, 'Students being Shown');
         return (
-            <View style={styles.container}>
-                <TouchableOpacity activeOpacity={0.4} style={styles.TouchableOpacityStyle} onPress={this.GoTo_Add_Student_Activity_Function} >
-                    <Text style={styles.TextStyle}> Add An Other STUDENT </Text>
-                </TouchableOpacity>
+            <View style={styles.container}>                
                 <FlatList
                     data={obj.state.student_list}
                     renderItem={({ item }) => {
@@ -63,16 +56,15 @@ class ShowStudentActivity extends React.Component {
 
     static navigationOptions =
         {
-            title: 'Students Only List',
+            title: 'Teacher List',
         };
 
     
     component_loaded(load_type){
         let obj = this;
-        console.log('Student shown with load type', load_type);
         db.transaction(tx => {
             tx.executeSql(
-                "create table if not exists students (id integer primary key not null, student_name text, student_phone_number text, student_email text);"
+                "create table if not exists teachers (id integer primary key not null, student_name text, student_phone_number text, student_email text);"
             );
         });
         obj.load_students_list();
@@ -80,10 +72,9 @@ class ShowStudentActivity extends React.Component {
 
     load_students_list(){
         let obj = this;
-        console.log('Loading students');
         db.transaction(
             tx => {
-                tx.executeSql("select * from students", [], (tx1, res) => {                    
+                tx.executeSql("select * from teachers", [], (tx1, res) => {                    
                     
                     let my_list = [];
                     if(res.rows){
@@ -114,7 +105,6 @@ class ShowStudentActivity extends React.Component {
     }
 
     on_student_updated(from_where) {
-        console.log('On student update Called', from_where);
         this.load_students_list();
     }
 
@@ -131,7 +121,7 @@ class ShowStudentActivity extends React.Component {
     async_load(){
         (async () => {
             //await AsyncStorage.removeItem('students/list');
-            let item_list = await AsyncStorage.getItem('students/list');
+            let item_list = await AsyncStorage.getItem('teachers/list');
             if (!item_list) {
                 item_list = '[]';
             }
@@ -145,27 +135,7 @@ class ShowStudentActivity extends React.Component {
             });
         })().catch(err => {
             console.error(err);
-        });
-        return fetch('http://localhost:8000/students/list/')
-            .then((response) => {
-                response.json().then((responseJson) => {
-                    if (responseJson && responseJson.data) {
-                        responseJson = responseJson.data;
-                    }
-                    student_list = responseJson;
-                    console.log(student_list, 888);
-                    this.setState({
-                        isLoading: false,
-                        dataSource: student_list,
-                    }, function () {
-                        // In this block you can do something with new state.
-                    });
-                }).catch((error) => {
-                    console.error(error);
-                });
-            }).catch((error) => {
-                console.error(error);
-            });
+        });        
     }
     ListViewItemSeparator = () => {
         return (
@@ -181,8 +151,8 @@ class ShowStudentActivity extends React.Component {
     GoTo_Add_Student_Activity_Function = () => {
         let obj = this;
         let params = { callback: obj.on_student_updated.bind(obj) }
-        obj.props.navigation.navigate('AddStudent', params);        
+        obj.props.navigation.navigate('AddTeacher', params);        
     }    
 }
 
-export default ShowStudentActivity;
+export default ShowTeacherActivity;

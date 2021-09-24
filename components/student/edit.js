@@ -1,7 +1,7 @@
 import React from 'react';
 import { Text, View, TextInput, TouchableOpacity } from 'react-native';
 
-import { db, styles } from './common';
+import { db, styles } from '../common';
 
 class EditStudentActivity extends React.Component {
 
