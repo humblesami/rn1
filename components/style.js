@@ -3,17 +3,13 @@ import { StyleSheet } from 'react-native';
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        paddingTop: 15,
+        paddingBottom: 15,
         backgroundColor: '#fff',
         alignItems: 'center',
-        justifyContent: 'center',
-        paddingBottom:10,
-        marginBottom: 10,
-        backgroundColor: '#000000'
+        justifyContent: 'center'
     },
     list_item: {
-        padding: 5,
-        margin: 5,
+        padding: 10,
     },
     MainContainer: {
         alignItems: 'center',
